@@ -44,7 +44,7 @@ class CriminalListCreateView(APIView):
 
             if embeddings:
                 avg_embedding = np.mean(embeddings, axis=0)
-                criminal.face_encoding = avg_embedding.tolist()
+                criminal.face_encoding = json.dumps(avg_embedding.tolist())
                 criminal.save()
             else:
                 return Response({'error': 'No face detected in any of the images'}, status=400)
@@ -90,6 +90,6 @@ class FaceMatchView(APIView):
         return Response({"message": "No match found"}, status=404)
 
 
-    def health(request):
-        """Simple health endpoint for deployment checks."""
-        return JsonResponse({"status": "ok", "service": "criminal-backend"})
+def health(request):
+    """Simple health endpoint for deployment checks."""
+    return JsonResponse({"status": "ok", "service": "criminal-backend"})

@@ -1,6 +1,6 @@
 # myapp/urls.py
 from django.urls import path
-from .views import CriminalListCreateView, FaceMatchView
+from .views import CriminalListCreateView, FaceMatchView, health
 
 urlpatterns = [
     path('api/criminals/', CriminalListCreateView.as_view(), name='criminals'),
