@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  body {
+    @apply min-h-screen font-sans;
+    margin: 0;
+    background: #0B1220;
+    color: #F8FAFC;
+  }
+
+  body.theme-light {
+    background: #F8FAFC;
+    color: #0F172A;
+  }
+
+  body.theme-light .bg-\[\#111827\] {
+    background-color: #F8FAFC !important;
+  }
+
+  body.theme-light .bg-\[\#0B1220\] {
+    background-color: #FFFFFF !important;
+  }
+
+  body.theme-light .bg-\[\#1F2937\] {
+    background-color: #E2E8F0 !important;
+  }
+
+  body.theme-light .text-white {
+    color: #0F172A !important;
+  }
+
+  body.theme-light .text-\[\#D1D5DB\] {
+    color: #475569 !important;
+  }
+
+  body.theme-light .text-\[\#9CA3AF\] {
+    color: #64748B !important;
+  }
+
+  body.theme-light .border-\[\#1F2937\] {
+    border-color: #CBD5E1 !important;
+  }
+
+  body.theme-light .border-\[\#111827\] {
+    border-color: #E2E8F0 !important;
+  }
+
+  body.theme-light .bg-\[\#111827\]\/95 {
+    background-color: rgba(255,255,255,0.95) !important;
+  }
+
+  body.theme-light .bg-\[\#0F172A\]\/80 {
+    background-color: rgba(255,255,255,0.9) !important;
+  }
+
+  body.theme-light .bg-\[\#2563EB\] {
+    background-color: #2563EB !important;
+  }
+}
+
+@layer utilities {
+  .animate-slow-spin {
+    animation: spin 12s linear infinite;
+  }
+}
