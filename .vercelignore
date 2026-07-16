@@ -1,2 +1,5 @@
-backend/
-backend/**
+# Keep repo files; per-project root directories control what gets built.
+# Avoid excluding the `backend` folder here — use Vercel project Root Directory instead.
+.vercel/**
+.DS_Store
+node_modules/
