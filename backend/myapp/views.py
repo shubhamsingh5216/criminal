@@ -11,6 +11,7 @@ from rest_framework import status
 from .models import Criminal
 from .serializers import CriminalSerializer
 from insightface.app import FaceAnalysis
+from django.http import JsonResponse
 
 # Initialize InsightFace model
 face_model = FaceAnalysis()
@@ -87,3 +88,8 @@ class FaceMatchView(APIView):
                 })
 
         return Response({"message": "No match found"}, status=404)
+
+
+    def health(request):
+        """Simple health endpoint for deployment checks."""
+        return JsonResponse({"status": "ok", "service": "criminal-backend"})
