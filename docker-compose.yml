@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/media:/app/media
+      - ./backend/db.sqlite3:/app/db.sqlite3
+    environment:
+      DJANGO_SETTINGS_MODULE: project.settings
+      # Set SECRET_KEY, DEBUG, DATABASE_URL, and storage env vars in production
+      # Example for local dev only:
+      # SECRET_KEY: "dev-secret"
+      # DEBUG: "1"
+    command: gunicorn project.wsgi:application --bind 0.0.0.0:8000 --workers 2
