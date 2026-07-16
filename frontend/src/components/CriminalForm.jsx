@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-
-const API_BASE = '/api';
+import { addCriminal } from '../../services/api';
 
 export default function CriminalForm({ setResult, setToast }) {
   const [formState, setFormState] = useState({ name: '', case_info: '' });
@@ -35,15 +34,11 @@ export default function CriminalForm({ setResult, setToast }) {
     formData.append('image_right', files.right);
 
     try {
-      const response = await fetch(`${API_BASE}/criminals/`, {
-        method: 'POST',
-        body: formData,
-      });
-      const data = await response.json();
+      const data = await addCriminal(formData);
       setResult(data);
-      setToast(response.ok ? 'Criminal added successfully' : 'Failed to add criminal');
+      setToast('Criminal added successfully');
     } catch (error) {
-      setResult({ error: 'Unable to connect with server.' });
+      setResult({ error: String(error) || 'Unable to connect with server.' });
       setToast('Server request failed');
     } finally {
       setLoading(false);

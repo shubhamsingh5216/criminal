@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-
-const API_BASE = '/api';
+import { matchCriminal } from '../../services/api';
 const PHASES = [
   { threshold: 20, label: 'Analyzing image quality' },
   { threshold: 45, label: 'Detecting facial landmarks' },
@@ -76,23 +75,19 @@ export default function FaceMatchForm({ setResult, setToast }) {
     formData.append('image', file);
 
     try {
-      const response = await fetch(`${API_BASE}/check-face/`, {
-        method: 'POST',
-        body: formData,
-      });
-      const data = await response.json();
+      const data = await matchCriminal(formData);
       stopScan();
       setScanProgress(100);
-      setScanMessage(response.ok ? 'Match complete' : 'No match found');
-      setStage(response.ok ? 'Match confirmed' : 'No match found');
+      setScanMessage('Match complete');
+      setStage('Match confirmed');
       setResult({ ...data, uploadedImage: uploadedPreview });
-      setToast(response.ok ? 'Match result received' : 'No match found');
+      setToast('Match result received');
     } catch (error) {
       stopScan();
       setScanProgress(100);
       setScanMessage('Connection failed');
       setStage('Connection issue');
-      setResult({ error: 'Unable to connect with server.' });
+      setResult({ error: String(error) || 'Unable to connect with server.' });
       setToast('Server request failed');
     } finally {
       setLoading(false);
