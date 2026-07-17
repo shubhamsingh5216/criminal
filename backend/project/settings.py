@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-qazt&vbqs_=ma^hvytdj4@gv*=gm2&(15obt5jiez6h4)5fn9f
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["criminalbackend-ten.vercel.app", "localhost", "127.0.0.1"]
 
 
 # Application definition
@@ -132,3 +132,4 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True
+CSRF_TRUSTED_ORIGINS = ["https://criminalbackend-ten.vercel.app"]

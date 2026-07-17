@@ -13,9 +13,20 @@ from .serializers import CriminalSerializer
 from insightface.app import FaceAnalysis
 from django.http import JsonResponse
 
-# Initialize InsightFace model
-face_model = FaceAnalysis()
-face_model.prepare(ctx_id=-1)
+# Lazily initialize InsightFace model to avoid heavy work at import time
+face_model = None
+
+def get_face_model():
+    global face_model
+    if face_model is None:
+        try:
+            m = FaceAnalysis()
+            m.prepare(ctx_id=-1)
+            face_model = m
+        except Exception as e:
+            print(f"Failed to initialize face model: {e}")
+            face_model = None
+    return face_model
 
 class CriminalListCreateView(APIView):
     def get(self, request):
@@ -28,17 +39,26 @@ class CriminalListCreateView(APIView):
         if serializer.is_valid():
             criminal = serializer.save()
 
-            embeddings = []
+            # Try to compute embeddings, but allow saving without them.
             image_paths = [
                 criminal.image_front.path,
                 criminal.image_left.path,
                 criminal.image_right.path
             ]
 
+            model = get_face_model()
+            if model is None:
+                data = CriminalSerializer(criminal).data
+                return Response({
+                    'warning': 'Face recognition model unavailable; saved without embeddings',
+                    'criminal': data
+                }, status=status.HTTP_201_CREATED)
+
+            embeddings = []
             for path in image_paths:
                 img = cv2.imread(path)
                 if img is not None:
-                    faces = face_model.get(img)
+                    faces = model.get(img)
                     if faces:
                         embeddings.append(faces[0].embedding)
 
@@ -46,10 +66,14 @@ class CriminalListCreateView(APIView):
                 avg_embedding = np.mean(embeddings, axis=0)
                 criminal.face_encoding = json.dumps(avg_embedding.tolist())
                 criminal.save()
+                data = CriminalSerializer(criminal).data
+                return Response(data, status=status.HTTP_201_CREATED)
             else:
-                return Response({'error': 'No face detected in any of the images'}, status=400)
-
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+                data = CriminalSerializer(criminal).data
+                return Response({
+                    'warning': 'No face detected in any of the images; saved without embeddings',
+                    'criminal': data
+                }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class FaceMatchView(APIView):
@@ -63,8 +87,12 @@ class FaceMatchView(APIView):
         image_full_path = default_storage.path(image_path)
 
         # Load and extract embedding from uploaded image
+        model = get_face_model()
+        if model is None:
+            return Response({'error': 'Face recognition model unavailable'}, status=503)
+
         uploaded_image = cv2.imread(image_full_path)
-        faces = face_model.get(uploaded_image)
+        faces = model.get(uploaded_image)
 
         if not faces:
             return Response({'error': 'No face found in uploaded image'}, status=400)

@@ -39,3 +39,4 @@ else:
 
 # Other production settings can be added here (CORS, allowed hosts, logging)
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
+CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', 'https://criminalbackend-ten.vercel.app').split(',')
